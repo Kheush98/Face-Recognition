@@ -2,21 +2,21 @@ import React, { useRef, useState, useCallback } from 'react';
 import Webcam from 'react-webcam';
 import {
   Box,
-  Button,
   Container,
-  TextField,
   Typography,
+  Button,
+  TextField,
   Paper,
-  Grid,
+  Alert,
+  Stack,
   Card,
   CardContent,
-  Alert,
-  CircularProgress,
-  Avatar,
+  Grid,
   Divider,
   IconButton,
   Fade,
-  useTheme
+  useTheme,
+  Avatar
 } from '@mui/material';
 import { styled, keyframes } from '@mui/material/styles';
 import {
@@ -50,60 +50,8 @@ const StyledWebcam = styled(Webcam)(({ theme }) => ({
   animation: `${pulseAnimation} 2s infinite`,
   transition: 'transform 0.3s ease-in-out',
   '&:hover': {
-    transform: 'scale(1.02)',
-  },
-}));
-
-const GlassCard = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(3),
-  borderRadius: '16px',
-  backgroundColor: 'rgba(255, 255, 255, 0.9)',
-  backdropFilter: 'blur(10px)',
-  boxShadow: '0 8px 32px rgba(31, 38, 135, 0.15)',
-  border: '1px solid rgba(255, 255, 255, 0.18)',
-  transition: 'transform 0.3s ease-in-out',
-  '&:hover': {
-    transform: 'translateY(-5px)',
-  },
-}));
-
-const StyledButton = styled(Button)(({ theme }) => ({
-  borderRadius: '12px',
-  padding: '12px 24px',
-  textTransform: 'none',
-  fontSize: '1rem',
-  fontWeight: 600,
-  boxShadow: 'none',
-  transition: 'all 0.3s ease-in-out',
-  '&:hover': {
-    transform: 'translateY(-2px)',
-    boxShadow: '0 6px 20px rgba(0, 0, 0, 0.1)',
-  },
-}));
-
-const StyledTextField = styled(TextField)(({ theme }) => ({
-  '& .MuiOutlinedInput-root': {
-    borderRadius: '12px',
-    transition: 'all 0.3s ease-in-out',
-    '&:hover': {
-      transform: 'translateY(-2px)',
-    },
-    '&.Mui-focused': {
-      transform: 'translateY(-2px)',
-    },
-  },
-}));
-
-const StyledAvatar = styled(Avatar)(({ theme }) => ({
-  width: 80,
-  height: 80,
-  fontSize: '2.5rem',
-  boxShadow: '0 8px 32px rgba(31, 38, 135, 0.2)',
-  border: '4px solid white',
-  transition: 'transform 0.3s ease-in-out',
-  '&:hover': {
-    transform: 'scale(1.1) rotate(5deg)',
-  },
+    transform: 'scale(1.02)'
+  }
 }));
 
 interface UserData {
@@ -137,8 +85,11 @@ function App() {
   };
 
   const capture = useCallback(() => {
-    const imageSrc = webcamRef.current?.getScreenshot();
-    return imageSrc;
+    if (webcamRef.current) {
+      const imageSrc = webcamRef.current.getScreenshot();
+      return imageSrc;
+    }
+    return null;
   }, [webcamRef]);
 
   const handleRegister = async () => {
@@ -151,7 +102,7 @@ function App() {
         throw new Error('Failed to capture image');
       }
 
-      const response = await fetch('http://localhost:8000/register', {
+      const response = await fetch('http://192.168.1.9:8000/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -214,7 +165,7 @@ function App() {
         throw new Error('Failed to capture image');
       }
 
-      const response = await fetch('http://localhost:8000/authenticate', {
+      const response = await fetch('http://192.168.1.9:8000/authenticate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -312,24 +263,24 @@ function App() {
 
             <Grid item xs={12} container spacing={4} justifyContent="center">
               <Grid item xs={12} md={6}>
-                <GlassCard>
+                <Paper sx={{ padding: 3, borderRadius: '16px', backgroundColor: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)', boxShadow: '0 8px 32px rgba(31, 38, 135, 0.15)', border: '1px solid rgba(255, 255, 255, 0.18)' }}>
                   <Box sx={{ mb: 3, display: 'flex', gap: 2 }}>
-                    <StyledButton
+                    <Button
                       variant={mode === 'authenticate' ? 'contained' : 'outlined'}
                       onClick={() => setMode('authenticate')}
                       startIcon={<Login />}
                       fullWidth
                     >
                       Authenticate
-                    </StyledButton>
-                    <StyledButton
+                    </Button>
+                    <Button
                       variant={mode === 'register' ? 'contained' : 'outlined'}
                       onClick={() => setMode('register')}
                       startIcon={<PersonAdd />}
                       fullWidth
                     >
                       Register
-                    </StyledButton>
+                    </Button>
                   </Box>
 
                   <Box sx={{ position: 'relative', mb: 3 }}>
@@ -349,70 +300,69 @@ function App() {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                          borderRadius: '16px',
-                          backdropFilter: 'blur(4px)',
+                          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                          borderRadius: '16px'
                         }}
                       >
-                        <CircularProgress size={60} />
+                        <Typography variant="h6" color="white">
+                          Traitement en cours...
+                        </Typography>
                       </Box>
                     )}
                   </Box>
 
                   {mode === 'register' && (
-                    <Fade in timeout={500}>
-                      <Grid container spacing={2}>
-                        <Grid item xs={6}>
-                          <StyledTextField
-                            fullWidth
-                            label="First Name"
-                            name="firstName"
-                            value={formData.firstName}
-                            onChange={handleFormChange}
-                            required
-                            variant="outlined"
-                          />
-                        </Grid>
-                        <Grid item xs={6}>
-                          <StyledTextField
-                            fullWidth
-                            label="Last Name"
-                            name="lastName"
-                            value={formData.lastName}
-                            onChange={handleFormChange}
-                            required
-                            variant="outlined"
-                          />
-                        </Grid>
-                        <Grid item xs={6}>
-                          <StyledTextField
-                            fullWidth
-                            label="Email"
-                            name="email"
-                            type="email"
-                            value={formData.email}
-                            onChange={handleFormChange}
-                            required
-                            variant="outlined"
-                          />
-                        </Grid>
-                        <Grid item xs={6}>
-                          <StyledTextField
-                            fullWidth
-                            label="Department"
-                            name="department"
-                            value={formData.department}
-                            onChange={handleFormChange}
-                            required
-                            variant="outlined"
-                          />
-                        </Grid>
+                    <Grid container spacing={2}>
+                      <Grid item xs={6}>
+                        <TextField
+                          fullWidth
+                          label="First Name"
+                          name="firstName"
+                          value={formData.firstName}
+                          onChange={handleFormChange}
+                          required
+                          variant="outlined"
+                        />
                       </Grid>
-                    </Fade>
+                      <Grid item xs={6}>
+                        <TextField
+                          fullWidth
+                          label="Last Name"
+                          name="lastName"
+                          value={formData.lastName}
+                          onChange={handleFormChange}
+                          required
+                          variant="outlined"
+                        />
+                      </Grid>
+                      <Grid item xs={6}>
+                        <TextField
+                          fullWidth
+                          label="Email"
+                          name="email"
+                          type="email"
+                          value={formData.email}
+                          onChange={handleFormChange}
+                          required
+                          variant="outlined"
+                        />
+                      </Grid>
+                      <Grid item xs={6}>
+                        <TextField
+                          fullWidth
+                          label="Department"
+                          name="department"
+                          value={formData.department}
+                          onChange={handleFormChange}
+                          required
+                          variant="outlined"
+                        />
+                      </Grid>
+                    </Grid>
                   )}
 
                   <Box sx={{ mt: 3 }}>
-                    <StyledButton
+                    <Button
                       fullWidth
                       variant="contained"
                       onClick={mode === 'register' ? handleRegister : handleAuthenticate}
@@ -427,7 +377,7 @@ function App() {
                       }}
                     >
                       {mode === 'register' ? 'Register' : 'Authentificate'}
-                    </StyledButton>
+                    </Button>
                   </Box>
 
                   {message && (
@@ -445,18 +395,18 @@ function App() {
                       </Alert>
                     </Fade>
                   )}
-                </GlassCard>
+                </Paper>
               </Grid>
 
               <Grid item xs={12} md={6}>
                 <Fade in={!!authenticatedUser} timeout={800}>
                   <Box>
                     {authenticatedUser ? (
-                      <GlassCard sx={{ height: '100%' }}>
+                      <Paper sx={{ padding: 3, borderRadius: '16px', backgroundColor: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)', boxShadow: '0 8px 32px rgba(31, 38, 135, 0.15)', border: '1px solid rgba(255, 255, 255, 0.18)', height: '100%' }}>
                         <Box sx={{ textAlign: 'center', mb: 4 }}>
-                          <StyledAvatar sx={{ mx: 'auto', mb: 2 }}>
+                          <Avatar sx={{ mx: 'auto', mb: 2, width: 80, height: 80, fontSize: '2.5rem', boxShadow: '0 8px 32px rgba(31, 38, 135, 0.2)', border: '4px solid white' }}>
                             {authenticatedUser.firstName[0]}{authenticatedUser.lastName[0]}
-                          </StyledAvatar>
+                          </Avatar>
                           <Typography variant="h4" sx={{ fontWeight: 600 }}>
                             {authenticatedUser.firstName} {authenticatedUser.lastName}
                           </Typography>
@@ -506,9 +456,9 @@ function App() {
                             </Grid>
                           )}
                         </Grid>
-                      </GlassCard>
+                      </Paper>
                     ) : mode === 'authenticate' && (
-                      <GlassCard>
+                      <Paper sx={{ padding: 3, borderRadius: '16px', backgroundColor: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)', boxShadow: '0 8px 32px rgba(31, 38, 135, 0.15)', border: '1px solid rgba(255, 255, 255, 0.18)' }}>
                         <Box sx={{ textAlign: 'center' }}>
                           <Security sx={{ fontSize: 60, color: 'primary.main', mb: 2 }} />
                           <Typography variant="h5" gutterBottom sx={{ fontWeight: 600 }}>
@@ -519,7 +469,7 @@ function App() {
                             Votre identité sera vérifiée contre notre base de données securisée.
                           </Typography>
                         </Box>
-                      </GlassCard>
+                      </Paper>
                     )}
                   </Box>
                 </Fade>

@@ -28,15 +28,16 @@ Un système d'authentification biométrique moderne utilisant la reconnaissance 
 ## Installation
 
 ### Prérequis
-- Python 3.8+
-- Node.js 14+
-- npm ou yarn
+- Python 3.9.13 (recommandé) ou 3.9.x
+- Node.js 14+ et npm
+- Webcam fonctionnelle
 
 ### Backend
 ```bash
 cd backend
 python -m venv venv
-source venv/bin/activate  # Sur Windows: venv\Scripts\activate
+source venv/bin/activate  # Sur Windows: .\venv\Scripts\activate
+pip install --upgrade pip setuptools wheel
 pip install -r requirements.txt
 python main.py
 ```
@@ -47,6 +48,19 @@ cd face-recognition-web
 npm install
 npm run dev
 ```
+
+### Dépendances principales
+#### Backend
+- fastapi==0.96.0
+- torch==2.0.0 (CPU version)
+- facenet-pytorch==2.5.3
+- numpy==1.23.4
+- Pillow==9.5.0
+
+#### Frontend
+- React 18+
+- Material-UI
+- react-webcam
 
 ## Utilisation
 

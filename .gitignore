@@ -1,2 +1,54 @@
-backend/venv/lib
-face-recognition-web/node_modules
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+backend/venv/
+backend/env/
+backend/*.log
+backend/users.json
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Node.js
+face-recognition-web/node_modules/
+face-recognition-web/.env
+face-recognition-web/.env.local
+face-recognition-web/.env.development.local
+face-recognition-web/.env.test.local
+face-recognition-web/.env.production.local
+face-recognition-web/build/
+face-recognition-web/dist/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local development
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Dependencies
+package-lock.json
+yarn.lock
+
+# Testing
+coverage/
+.coverage
+htmlcov/
